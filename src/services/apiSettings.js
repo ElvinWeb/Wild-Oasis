@@ -18,7 +18,6 @@ async function updateSetting(newSetting) {
     .single();
 
   if (error) {
-    console.error(error);
     throw new Error("Settings could not be updated");
   }
   return data;
