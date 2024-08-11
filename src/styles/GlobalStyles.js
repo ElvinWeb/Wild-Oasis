@@ -60,6 +60,7 @@ const GlobalStyles = createGlobalStyle`
   padding: 0;
   margin: 0;
   transition: background-color 0.3s, border 0.3s;
+  transition: all 0.4s ease-in-out;
 }
 
 html {

@@ -2,8 +2,8 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import Spinner from "../../ui/Spinner";
-import { useSettings } from "../../hooks/useSettings";
-import { useUpdateSetting } from "../../hooks/useUpdateSetting";
+import { useSettings } from "../../hooks/settings/useSettings";
+import { useUpdateSetting } from "../../hooks/settings/useUpdateSetting";
 
 function UpdateSettingsForm() {
   const {
