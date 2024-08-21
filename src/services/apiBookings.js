@@ -1,7 +1,8 @@
 import { getToday } from "../utils/helpers";
+import { PAGE_SIZE } from "../utils/constants";
 import supabase from "./supabase";
 
-async function getBooking(id) {
+export async function getBooking(id) {
   const { data, error } = await supabase
     .from("bookings")
     .select("*, cabins(*), guests(*)")
@@ -15,21 +16,37 @@ async function getBooking(id) {
   return data;
 }
 
-async function getBookings() {
-  const { data, error } = await supabase
+export async function getBookings({ filter, sortBy, page }) {
+  let query = supabase
     .from("bookings")
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, cabins(name), guests(fullname, email)"
+      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, cabins(name), guests(fullname, email)",
+      { count: "exact" }
     );
+
+  if (filter) query = query.eq(filter.field, filter.value);
+
+  if (sortBy)
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
+
+  if (page) {
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    query = query.range(from, to);
+  }
+
+  const { data, error, count } = await query;
 
   if (error) {
     throw new Error("Bookings could not get loaded");
   }
 
-  return data;
+  return { data, count };
 }
 
-async function getBookingsAfterDate(date) {
+export async function getBookingsAfterDate(date) {
   const { data, error } = await supabase
     .from("bookings")
     .select("created_at, totalPrice, extrasPrice")
@@ -43,7 +60,7 @@ async function getBookingsAfterDate(date) {
   return data;
 }
 
-async function getStaysAfterDate(date) {
+export async function getStaysAfterDate(date) {
   const { data, error } = await supabase
     .from("bookings")
     // .select('*')
@@ -59,7 +76,7 @@ async function getStaysAfterDate(date) {
   return data;
 }
 
-async function getStaysTodayActivity() {
+export async function getStaysTodayActivity() {
   const { data, error } = await supabase
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")
@@ -75,7 +92,7 @@ async function getStaysTodayActivity() {
   return data;
 }
 
-async function updateBooking(id, obj) {
+export async function updateBooking(id, obj) {
   const { data, error } = await supabase
     .from("bookings")
     .update(obj)
@@ -90,7 +107,7 @@ async function updateBooking(id, obj) {
   return data;
 }
 
-async function deleteBooking(id) {
+export async function deleteBooking(id) {
   const { data, error } = await supabase.from("bookings").delete().eq("id", id);
 
   if (error) {
@@ -99,13 +116,3 @@ async function deleteBooking(id) {
   }
   return data;
 }
-
-export {
-  getBooking,
-  getBookings,
-  getBookingsAfterDate,
-  getStaysAfterDate,
-  getStaysTodayActivity,
-  updateBooking,
-  deleteBooking,
-};
