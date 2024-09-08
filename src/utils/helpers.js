@@ -1,16 +1,16 @@
 import { formatDistance, parseISO, differenceInDays } from "date-fns";
 
-const subtractDates = (dateStr1, dateStr2) =>
+export const subtractDates = (dateStr1, dateStr2) =>
   differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)));
 
-const formatDistanceFromNow = (dateStr) =>
+export const formatDistanceFromNow = (dateStr) =>
   formatDistance(parseISO(dateStr), new Date(), {
     addSuffix: true,
   })
     .replace("about ", "")
     .replace("in", "In");
 
-const getToday = function (options = {}) {
+export const getToday = function (options = {}) {
   const today = new Date();
 
   if (options?.end) today.setUTCHours(23, 59, 59, 999);
@@ -18,9 +18,7 @@ const getToday = function (options = {}) {
   return today.toISOString();
 };
 
-const formatCurrency = (value) =>
+export const formatCurrency = (value) =>
   new Intl.NumberFormat("en", { style: "currency", currency: "USD" }).format(
     value
   );
-
-export { subtractDates, formatDistanceFromNow, getToday, formatCurrency };
